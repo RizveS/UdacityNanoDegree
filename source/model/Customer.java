@@ -7,10 +7,9 @@ public class Customer {
 
     public String toString() {
         String displayText = String.format("""
-            This object represents a customer with properties: \n
-            First Name: %s \n
-            Last Name: %s \n
-            Email: %s \n
+            First Name: %s
+            Last Name: %s
+            Email: %s
         """,firstName,lastName,email);
         return displayText;
     }
@@ -38,5 +37,16 @@ public class Customer {
     public String getEmail() {
         return this.email;
 
+    }
+
+    public boolean equals(Customer customer) {
+            if ((this.firstName.matches(customer.getCustomerFirstName())) &
+            (this.lastName.matches(customer.getCustomerLastName())) &
+            (this.email.matches(customer.getEmail()))) {
+                return true;
+            }
+            else {
+                return false;
+            }
     }
 }

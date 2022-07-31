@@ -13,18 +13,32 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ReservationService {
-    static HashMap<String,List<Reservation>> ReservationList = new HashMap<String,List<Reservation>>();
-    static List<Room> AllRooms = new ArrayList<>();
-    static HashMap<String,Room> AvailableRooms = new HashMap<String,Room>();
+    private HashMap<String,List<Reservation>> ReservationList;
+    private List<Room> AllRooms;
+    private HashMap<String,Room> AvailableRooms;
+    private static ReservationService ReservationServiceInstance = null;
 
-    public static void addRoom(Collection<Room> rooms) {
+    private ReservationService() {
+        ReservationList = new HashMap<String,List<Reservation>>();
+        AllRooms = new ArrayList<>();
+        AvailableRooms = new HashMap<String,Room>();
+    }
+
+    public static ReservationService getInstance() {
+        if (ReservationServiceInstance == null) {
+            ReservationServiceInstance = new ReservationService();
+        }
+        return ReservationServiceInstance;
+    }
+
+    public void addRoom(Collection<Room> rooms) {
         for (Room room: rooms) {
         AvailableRooms.put(room.getRoomNumber(),room);
         AllRooms.add(room);
         }
     };
 
-    public static Room getARoom(String roomId) throws NoRoomFoundException{
+    public Room getARoom(String roomId) throws NoRoomFoundException{
         if (AvailableRooms.containsKey(roomId)){
             return AvailableRooms.get(roomId);
         }
@@ -33,11 +47,14 @@ public class ReservationService {
         }
     };
 
-    public static Reservation reserveARoom(Customer customer,
+    public Reservation reserveARoom(Customer customer,
     Room room, Date checkInDate, Date checkOutDate) {
 
         AvailableRooms.remove(room.getRoomNumber());
         Reservation customerReservation = new Reservation(customer,room,checkInDate,checkOutDate);
+        List<Reservation> ReservationsToAdd = new ArrayList<Reservation>();
+        ReservationsToAdd.add(customerReservation);
+        ReservationList.put(customer.getEmail(),ReservationsToAdd);
         /*if (ReservationList.containsKey(customer.getEmail())) {
             List<Reservation> prevReservations = ReservationList.get(customer.getEmail());
             for (Reservation reserv: prevReservations) {
@@ -59,7 +76,7 @@ public class ReservationService {
 
     };
 
-    public static Collection<Room> findRooms(Date checkInDate,
+    public Collection<Room> findRooms(Date checkInDate,
     Date checkOutDate) throws NoRoomFoundException{
         List<Room> MatchedRooms = new ArrayList<>();
         for (Room room:AvailableRooms.values()) {
@@ -84,7 +101,7 @@ public class ReservationService {
         return MatchedRooms;
     };
 
-    public static Collection<Reservation> getCustomerReservation(Customer customer) throws NoCustomerFoundException  {
+    public Collection<Reservation> getCustomerReservation(Customer customer) throws NoCustomerFoundException  {
         if (ReservationList.containsKey(customer.getEmail())) {
             return ReservationList.get(customer.getEmail());
         }
@@ -93,18 +110,23 @@ public class ReservationService {
         }
     }
 
-    public static Collection<Room> getAllRooms() {
+    public Collection<Room> getAllRooms() {
         return AllRooms;
     }
 
-    public static void printAllReservation() {
+    public void printAllReservation() {
         System.out.println("**********************Printing out all the reservations****************************");
-        for (List<Reservation> reservList:ReservationList.values()) {
-            for (Reservation reserv: reservList) {
-            System.out.println("-------------------------------------------------------------------------");
-            System.out.println(reserv.toString());
-            }
+        if (ReservationList.size() > 0 ) {
+            for (List<Reservation> reservList:ReservationList.values()) {
+                    for (Reservation reserv: reservList) {
+                    System.out.println("-------------------------------------------------------------------------");
+                    System.out.println(reserv.toString());
+                    }
+                }
         }
-    };
+        else {
+            System.out.println("No reservations found");
+        }
+    }
 
 }

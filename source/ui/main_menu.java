@@ -1,6 +1,8 @@
 package source.ui;
+import source.api.HotelResource;
 import source.model.*;
 import source.ui.ReturnToMainMenuException;
+import source.ui.admin_menu;
 
 import java.util.Scanner;
 import java.util.List;
@@ -52,6 +54,12 @@ public class main_menu {
                     case 3:
                     ListOption3(InputConsole);
                     break;
+                    case 4:
+                    admin_menu.launch_admin_menu(InputConsole);
+                    break;
+                    case 5:
+                    System.exit(0);
+                    break;
                     default:
                     System.out.println("Invalid Option");
                 }
@@ -73,6 +81,7 @@ public class main_menu {
         int roomCount = 0;
         Collection<Room> RoomList;
         List<Room> RoomListIndexable = new ArrayList<Room>();
+        ReservationService ReservationServiceInstance = HotelResource.getInstance().getReservationInstance();
 
         System.out.println("---------------- Find & Reserve Room------------------");
         System.out.println("Please input the type of room you want to reserve, SINGLE or DOUBLE");
@@ -101,7 +110,7 @@ public class main_menu {
         CheckOutDate = GetDateInput("Please enter the desired check-out date as MM/DD/YYYY",InputConsole);
     
         try {
-            RoomList = ReservationService.findRooms(CheckInDate,CheckOutDate);
+            RoomList = ReservationServiceInstance.findRooms(CheckInDate,CheckOutDate);
             System.out.println("The following rooms are available");
             for (Room room: RoomList) {
                     if (branchVar == 1) {
@@ -168,13 +177,14 @@ public class main_menu {
 
                 }
             Customer person = new Customer(firstName, lastName, email);
-            ReservationService.reserveARoom(person, RoomListIndexable.get(chosenRoom), CheckInDate, CheckOutDate);
+            ReservationServiceInstance.reserveARoom(person, RoomListIndexable.get(chosenRoom), CheckInDate, CheckOutDate);
             System.out.println("Thank you for staying with us! Your room has been booked.");
             throw new ReturnToMainMenuException("Returning to main menu....");
 
         }
     }
     private static void ListOption2(Scanner InputConsole) throws ReturnToMainMenuException{
+        ReservationService ReservationServiceInstance = HotelResource.getInstance().getReservationInstance();
         System.out.println("---------------- See Your Reservations------------------");
         System.out.println("Please enter your first name: ");
         String firstName = InputConsole.nextLine(); 
@@ -194,7 +204,7 @@ public class main_menu {
         }
         Customer customer = new Customer(firstName,lastName,email);
         try{
-        for (Reservation resv: ReservationService.getCustomerReservation(customer)) {
+        for (Reservation resv: ReservationServiceInstance.getCustomerReservation(customer)) {
             System.out.println(resv.toString());
         };
         }
@@ -205,6 +215,7 @@ public class main_menu {
 
     }
     private static void ListOption3(Scanner InputConsole) throws ReturnToMainMenuException{
+        CustomerService CustomerServiceInstance = HotelResource.getInstance().getCustomerInstance();
         System.out.println("---------------- Create a Customer Account------------------");
         System.out.println("Please enter your first name: ");
         String firstName = InputConsole.nextLine(); 
@@ -221,12 +232,12 @@ public class main_menu {
             System.out.println("Enter EXIT to return to main menu");
             email = InputConsole.nextLine();
         }
-        CustomerService.addCustomer(firstName, lastName, email);
+        CustomerServiceInstance.addCustomer(firstName, lastName, email);
         System.out.println(String.format("An account for %s %s has been created, with email %s. Thank you", firstName,lastName,email));
         throw new ReturnToMainMenuException("Returning to main menu");
 
     }
-
+    
     //Helper functions
     private static Date GetDateInput(String displayString, Scanner InputConsole){
         System.out.println(displayString);

@@ -12,32 +12,64 @@ import java.util.Collection;
 
 
 public class HotelResource {
+    private static CustomerService CustomerServiceInstance;
+    private static ReservationService ReservationServiceInstance;
+    private static HotelResource HotelResourceInstance;
+
+    private HotelResource() {
+        CustomerServiceInstance = CustomerService.getInstance();
+        ReservationServiceInstance =  ReservationService.getInstance();
+    }
+
+    public static HotelResource getInstance() {
+        if (HotelResourceInstance == null) {
+            HotelResourceInstance = new HotelResource();
+        }
+        return HotelResourceInstance;
+    }
+
+    public CustomerService getCustomerInstance() {
+        return CustomerServiceInstance;
+    }
+
+    public ReservationService getReservationInstance() {
+        return ReservationServiceInstance;
+    }
+    
     public static Customer getCustomer(String Email) throws NoEmailFoundException {
-        Customer cust = CustomerService.getCustomer(Email);
+        CustomerService CustomerServiceInstance = CustomerService.getInstance();
+        Customer cust = CustomerServiceInstance.getCustomer(Email);
         return cust;
     
     }
 
     public static void createACustomer(String email, String firstName, String lastName) {
-        CustomerService.addCustomer(firstName, lastName, email);
+        CustomerService CustomerServiceInstance = CustomerService.getInstance();
+        CustomerServiceInstance.addCustomer(firstName, lastName, email);
     }
 
     public static Room getRoom(String roomNumber) throws NoRoomFoundException {
-            return ReservationService.getARoom(roomNumber);
+        ReservationService ReservationServiceInstance = ReservationService.getInstance();
+        return ReservationServiceInstance.getARoom(roomNumber);
     }
 
     public static Reservation bookARoom(String customerEmail, Room room, Date checkInDate, Date checkOutDate) throws NoEmailFoundException {
-        Customer cust = CustomerService.getCustomer(customerEmail);
-        return ReservationService.reserveARoom(cust, room, checkInDate, checkOutDate);
+        ReservationService ReservationServiceInstance = ReservationService.getInstance();
+        CustomerService CustomerServiceInstance = CustomerService.getInstance();
+        Customer cust = CustomerServiceInstance.getCustomer(customerEmail);
+        return ReservationServiceInstance.reserveARoom(cust, room, checkInDate, checkOutDate);
 
     }
 
     public static Collection<Reservation> getCustomerReservations(String CustomerEmail) throws NoEmailFoundException, NoCustomerFoundException {
-        Customer cust = CustomerService.getCustomer(CustomerEmail);
-        return ReservationService.getCustomerReservation(cust); 
+        ReservationService ReservationServiceInstance = ReservationService.getInstance();
+        CustomerService CustomerServiceInstance = CustomerService.getInstance();
+        Customer cust = CustomerServiceInstance.getCustomer(CustomerEmail);
+        return ReservationServiceInstance.getCustomerReservation(cust); 
     }
 
     public static Collection<Room> findARoom(Date checkInDate, Date checkOutDate) throws NoRoomFoundException{
-        return ReservationService.findRooms(checkInDate, checkOutDate);
+        ReservationService ReservationServiceInstance = ReservationService.getInstance();
+        return ReservationServiceInstance.findRooms(checkInDate, checkOutDate);
     }
 }

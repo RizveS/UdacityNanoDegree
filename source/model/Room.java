@@ -15,10 +15,9 @@ RoomType roomType;
 
     public String toString() {
         String displayText = String.format("""
-            This object represents a room with properties: \n
-            Room Number: %d \n
-            Price: %f \n
-            Type of Room: %s \n
+            Room Number: %s 
+            Price: %.2f
+            Type of Room: %s
         """,roomNumber,price,roomType);
         return displayText;
     }
@@ -37,5 +36,16 @@ RoomType roomType;
 
     public boolean isFree() {
         return !(this.price > 0.0);
+    }
+
+    public boolean equals(Room room) {
+        if (this.roomNumber.matches(room.getRoomNumber())
+        & (this.price == room.getRoomPrice()) 
+        & (this.roomType == room.getRoomType())) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }

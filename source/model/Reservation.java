@@ -9,12 +9,11 @@ public class Reservation {
 
     public String toString() {
         String displayText = String.format("""
-        This object represents a reservation with properties: \n
-        Customer First Name: %s \n
-        Customer Last Name: %s \n
-        Room Reserved by Customer: %s\n
-        Check-In Date: %s \n
-        Check-Out Date: %s \n
+        Customer First Name: %s
+        Customer Last Name: %s
+        Room Reserved by Customer: %s
+        Check-In Date: %s
+        Check-Out Date: %s 
         """,customer.getCustomerFirstName(),customer.getCustomerLastName()
         ,room.getRoomNumber(),checkInDate,checkOutDate);
         return displayText;
@@ -42,6 +41,22 @@ public class Reservation {
 
     public Room getRoom() {
         return room;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public boolean equals(Reservation reserv) {
+        if ((this.customer == reserv.getCustomer())
+        & (this.room == reserv.getRoom()) 
+        & (this.checkInDate == reserv.getCheckIn())
+        & (this.checkOutDate == reserv.getCheckOut())) {
+            return true;
+        }
+        else {
+            return false;
+        } 
     }
 
 }
